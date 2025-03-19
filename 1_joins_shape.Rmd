@@ -49,12 +49,10 @@ Example data:
 
 ```{r, message=FALSE}
 library(tidyverse)
-data1 <- data.frame(ID = 1:2,                      # Create first example data frame
-                    X1 = c("a1", "a2")) #,
-                    # stringsAsFactors = FALSE)
-data2 <- data.frame(ID = 2:3,                      # Create second example data frame
-                    X2 = c("b1", "b2")) #,
-                    # stringsAsFactors = FALSE)
+data1 = data.frame(ID = 1:2,                      # Create first example data frame
+                   X1 = c("a1", "a2")) 
+data2 = data.frame(ID = 2:3,                      # Create second example data frame
+                   X2 = c("b1", "b2")) 
 ```
 
 The figure below illustrates what our two data frames look like and how we can merge them based on the different join functions of the `dplyr` package. On the top of the figure you can see the structure of our example data frames. Both data frames contain two columns: The ID and one variable. Note that both data frames have the ID No. 2 in common. On the bottom row of the figure you can see how each of the join functions merges our two example data frames.
@@ -63,7 +61,7 @@ The figure below illustrates what our two data frames look like and how we can m
 
 ### Left joins
 
-This is the join that I use most frequently. The `left_join()` returns all rows from data1 and all columns from data1 and data2. Rows in data1 with no match in data2 will have `NA` values in the new columns. If there are multiple matches between data1 and data2, all combinations of the matches are returned. If the joining variable that links your two data frames, you don't need to explicitly identify what that joining variable is. 
+This is the join that I use most frequently. The `left_join()` returns all rows from data1 and all columns from data1 and data2. Rows in data1 with no match in data2 will have `NA` values in the new columns. If there are multiple matches between data1 and data2, all combinations of the matches are returned. If the joining variable that links your two data frames has the same column name, you don't need to explicitly identify what that joining variable is. 
 
 ```{r}
 # 3 equivalent ways to perform the left_join():
@@ -76,12 +74,17 @@ data12_left = left_join(data1, data2, by="ID")
 data12_left = data1 %>%
   left_join(data2, by="ID")
 data12_left
-
 ```
 
 ![](doc/left_join-dplyr-r-package-function.png){width=50%}
 
 The function `right_join()` is equivalent to `left_join()` but reverses the order of the 2 data frames (i.e. all of the rows in the "right" or second data frame are preserved).
+
+```{r}
+# Without specifying the joining variable:
+data12_right = right_join(data1, data2)
+data12_right
+```
 
 ### Inner join
 
@@ -100,9 +103,9 @@ data12_inner
 The function `full_join()` returns all rows and columns from both data1 and data2. The function returns `NA` for any missing values.
 
 ```{r}
-data12_inner = data1 %>%
+data12_full = data1 %>%
   full_join(data2, by="ID")
-data12_inner
+data12_full
 ```
 
 ![](doc/full_join-dplyr-r-package-function.png){width=50%}
@@ -151,16 +154,16 @@ To look at these two functions, we'll create some more example data. Let's prete
 
 ```{r}
 survey = data.frame(quadrat_id = c(101, 102, 103, 104),
-                    barnacle_n = c(2, 11, 8, 27),
-                    chiton_n = c(1, 0, 0, 2),
-                    mussel_n = c(0, 1, 1, 4))
+                    barnacle = c(2, 11, 8, 27),
+                    chiton = c(1, 0, 0, 2),
+                    mussel = c(0, 1, 1, 4))
 ```
 
 This is the "wide" format, because each type of observation has its own column. The `pivot_longer()` function is used to convert this data to the long format. You will select a subset of columns to stack on top of each other that can be passed to the `cols` parameter as a vector of column names (strings). Set the `names_to` parameter to the name of the new column that will contain the old column names. Set the `values_to` parameter to the name of the new column that will contains the elements associated with each former column. Note that the columns that are not selected in `pivot_longer()` will be retained, and their values will be repeated.
 
 ```{r}
 long = survey %>% 
-  pivot_longer(cols=c("barnacle_n", "chiton_n", "mussel_n"), names_to="taxon", values_to="counts")
+  pivot_longer(cols=c("barnacle", "chiton", "mussel"), names_to="taxa", values_to="counts")
 head(long)
 ```
 
@@ -168,7 +171,7 @@ Then we can take long data and convert it to wide data for analysis with the `pi
 
 ```{r}
 wide = long %>%
-  pivot_wider(names_from=taxon, values_from=counts)
+  pivot_wider(names_from=taxa, values_from=counts)
 head(wide)
 ```
 
