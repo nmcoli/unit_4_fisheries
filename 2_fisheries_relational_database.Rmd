@@ -22,7 +22,8 @@ The RAM Legacy Stock Assessment Database is a compilation of stock assessment re
 
 Go to the RAM Legacy website and click through to download the latest version of the RAM data from Zenodo. The data (rather inefficiently, if you ask me) is delivered in multiple formats simultaneously, including Microsoft Excel files and RData files. Since we are using R, I'm going to load the RData file using the `load()` function.
 
-Note: Usually when I receive Excel files, I convert them to `.csv` files and read them in with `read.csv()`, but there is also an R package to load Excel files directly into R called `readxl`. 
+Note: Usually when I receive Excel files, I convert them to `.csv` files and read them in with `read.csv()`, but there is also an R package to load Excel files directly into R called `readxl`. Please be careful using Excel on large datasets, as Microsoft limits the number of rows that can exist in a spreadsheet. RAM Legacy handles this by breaking large datasets into multiple sheets (such as timeseries.1, timeseries.2 and timeseries.3). Mishandling this can cause the unintentional loss of valuable data, see this BBC article about lost Covid-19 test results:
+<https://www.bbc.com/news/technology-54423988>
 
 ```{r}
 load('data/RAMLDB v4.66/R Data/DBdata[asmt][v4.66].RData')
